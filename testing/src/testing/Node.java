@@ -3,27 +3,33 @@ package testing;
 public class Node {
 
 	// 1-state : Access Team from class Search
-	State currentState;
+	public State currentState;
 
 	// 2-parent Node
-	Node parent;
+	public Node parent;
 
 	// 3-Operator
-	Operator operator;
+	public Operator operator;
 
 	// 4-Depth
-	int depth = 0;
+	public int depth = 0;
 
 	// 5-Path cost
-	int cost = 0;
+	public int cost = 0;
+	
+	// heuristic ... 
+	public int h1 = 0;
+	public double h2 = 0;
 	
 	//REPEATED STATES SHOULD BE HANDLED HEREEEEEEEE!!!!!!!!!!!
-	public Node(State currentState, Operator operator, Node parent, int depth, int cost) {
+	public Node(State currentState, Operator operator, Node parent, int depth, int cost, int h1, double h2) {
 		this.currentState = currentState;
 		this.operator = operator;
 		this.parent = parent;
-		this.depth = depth+1;
+		this.depth = depth;
 		this.cost = cost;
-	
+		this.h1 = h1;
+		this.h2 = h2;
+	}
 
-	}}
+}
