@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class TheMatrix {
+	public static int deaths=0;
+	public static int kills=0;
 
 	// generate grid coordinate
 	public static int m;
@@ -143,13 +145,80 @@ public State stateSpace(Operator operator, State parentState){
 		State currentState = new State(parentState.xPosition,parentState.yPosition, parentState.carried, parentState.damageNeo, parentState.remainingHostages,parentState.carriedHostages ,parentState.Agents, parentState.remainingPills, parentState.Pads);
 		
 		if (operator.compareTo(Operator.UP) == 0) {
-			currentState.xPosition=(currentState.xPosition==0)? 0 : currentState.xPosition - 1;
+			
+			
+			boolean found = false; 
+			int index = 0;
+			for(int i = 0; i < currentState.Agents.size(); i++) {
+				Agents temp = currentState.Agents.get(i);
+				if((temp.x == currentState.xPosition-1&& temp.y == currentState.yPosition)) {
+					found = true;
+					index = i;
+					break;
+				}
+			}
+			
+			if(!found) {
+				
+				currentState.xPosition=(currentState.xPosition==0)? 0 : currentState.xPosition - 1;
+				
+			}
+	
+		
 		} else if (operator.compareTo(Operator.DOWN) == 0) {
-			currentState.xPosition=(currentState.xPosition==TheMatrix.m-1) ? TheMatrix.m-1:currentState.xPosition + 1;
+			
+			boolean found = false; 
+			int index = 0;
+			for(int i = 0; i < currentState.Agents.size(); i++) {
+				Agents temp = currentState.Agents.get(i);
+				if((temp.x == currentState.xPosition+1&& temp.y == currentState.yPosition)) {
+					found = true;
+					index = i;
+					break;
+				}
+			}
+			
+			if(!found) {
+				currentState.xPosition=(currentState.xPosition==TheMatrix.m-1) ? TheMatrix.m-1:currentState.xPosition + 1;
+				
+			}
+			
 		} else if (operator.compareTo(Operator.RIGHT) == 0) {
-			currentState.yPosition=(currentState.yPosition==TheMatrix.n-1) ? TheMatrix.n-1:currentState.yPosition + 1;
+			boolean found = false; 
+			int index = 0;
+			for(int i = 0; i < currentState.Agents.size(); i++) {
+				Agents temp = currentState.Agents.get(i);
+				if((temp.x == currentState.xPosition&& temp.y == currentState.yPosition+1)) {
+					found = true;
+					index = i;
+					break;
+				}
+			}
+			
+			if(!found) {
+				currentState.yPosition=(currentState.yPosition==TheMatrix.n-1) ? TheMatrix.n-1:currentState.yPosition + 1;
+				
+			}
+			
+			
 		} else if (operator.compareTo(Operator.LEFT) == 0) {
-			currentState.yPosition=(currentState.yPosition==0) ? 0:currentState.yPosition - 1;
+			
+			boolean found = false; 
+			int index = 0;
+			for(int i = 0; i < currentState.Agents.size(); i++) {
+				Agents temp = currentState.Agents.get(i);
+				if((temp.x == currentState.xPosition&& temp.y == currentState.yPosition-1)) {
+					found = true;
+					index = i;
+					break;
+				}
+			}
+			
+			if(!found) {
+				currentState.yPosition=(currentState.yPosition==0) ? 0:currentState.yPosition - 1;
+				
+			}
+			
 		} else if (operator.compareTo(Operator.CARRY) == 0) {
 			if(currentState.carried > 0) {
 				boolean found = false; 
@@ -178,12 +247,12 @@ public State stateSpace(Operator operator, State parentState){
 			
 		}
 		else if (operator.compareTo(Operator.KILL) == 0) {
-			//if(currentState.damageNeo > 20) {//do i need to do this check ?
+			//if(currentState.damageNeo > 80) {//do i need to do this check ?
 				boolean found = false; 
 				int index = 0;
 				for(int i = 0; i < currentState.Agents.size(); i++) {
 					Agents temp = currentState.Agents.get(i);
-					if(temp.x == currentState.xPosition && temp.y == currentState.yPosition) {
+					if((temp.x-1 == currentState.xPosition&& temp.y == currentState.yPosition)||(temp.x+1 == currentState.xPosition && temp.y == currentState.yPosition)||(temp.x == currentState.xPosition && temp.y-1 == currentState.yPosition)||(temp.x == currentState.xPosition && temp.y+1 == currentState.yPosition) ) {
 						found = true;
 						index = i;
 						break;
@@ -203,7 +272,7 @@ public State stateSpace(Operator operator, State parentState){
 		}
 		
 		else if (operator.compareTo(Operator.TAKEPILL) == 0) {
-			if(currentState.damageNeo > 0) {//do i need to do this check ?
+			//if(currentState.damageNeo > 0) {//do i need to do this check ?
 				boolean found = false; 
 				int index = 0;
 				for(int i = 0; i < currentState.remainingPills.size(); i++) {
@@ -220,7 +289,7 @@ public State stateSpace(Operator operator, State parentState){
 					if (currentState.damageNeo<=0) {
 						currentState.damageNeo=0;
 					}
-					}
+					
 				
 					//check if nemo's dead wala avoided fo2??
 					//if 100 dead ? Game Over 
@@ -228,9 +297,9 @@ public State stateSpace(Operator operator, State parentState){
 					currentState.carriedHostages=decreaseDamage(currentState.carriedHostages);
 
 					currentState.remainingPills.remove(index);
-					
-					
 				}
+					
+				//}
 			//}
 			
 		}
@@ -257,9 +326,14 @@ public State stateSpace(Operator operator, State parentState){
 				}
 			}
 		}
-		
+		//add a cond for pikk
+		if(operator.compareTo(Operator.TAKEPILL) != 0) {
 		//How can i increase the health of a hostage on the truck
-		//currentState.remaining = increaseDamage(currentState.remaining);
+		currentState = increaseDamageRemaining(currentState);
+		currentState.carriedHostages = increaseDamageCarried(currentState.carriedHostages);
+
+		
+		}
 		return currentState;
 	}
 
@@ -269,13 +343,13 @@ public State stateSpace(Operator operator, State parentState){
 
 		for (int i = 0; i < remaining.size(); i++) {
 			Hostages temp = remaining.get(i);
-			if (temp.damage > 0) {
+			if (temp.damage > 0 && temp.damage<100) {
 				temp.damage -= 20;
 			}
 			if (temp.damage <= 0) {
-				temp.damage -= 22;
+				temp.damage =0;
 			}
-			// 22 because when i take the pill -20 wana keda kda ha3mel -2 so total =20
+//			// 22 because when i take the pill -20 wana keda kda ha3mel -2 so total =20
 
 			remaining.set(i, temp);
 		}
@@ -283,21 +357,51 @@ public State stateSpace(Operator operator, State parentState){
 		return remaining;
 	}
 
-	public ArrayList<Hostages> increaseDamage(ArrayList<Hostages> remaining, int CarriedOrRemaining) {
+	public State increaseDamageRemaining(State CurrentState) {
 		// SANDY
 		// what if my health reaches 100 do i convert him here
 		// int =0 means it was carried so if it died msh h3mel haga
 		// however if int =1 convert to Agent??
 
-		for (int i = 0; i < remaining.size(); i++) {
-			Hostages temp = remaining.get(i);
-			if (temp.damage < 100) {
-				temp.damage += 2;
+		 //Remaining Hostages
+			for (int i = 0; i < CurrentState.remainingHostages.size(); i++) {
+				Hostages temp = CurrentState.remainingHostages.get(i);
+				if (temp.damage < 100) {
+					temp.damage += 2;
+				CurrentState.remainingHostages.set(i, temp);
+				}
+				if(temp.damage>=100) {
+					deaths+=1;
+					Hostages converted=CurrentState.remainingHostages.remove(i);
+					Agents newAgent=new Agents(converted.x, converted.y);
+					CurrentState.Agents.add(newAgent);
+					i--;
+
+				}
+
+				
 			}
-
-			remaining.set(i, temp);
-		}
-
-		return remaining;
+			
+		return CurrentState;
 	}
+	
+	public ArrayList<Hostages> increaseDamageCarried(ArrayList<Hostages> carried) {
+		
+		for (int i = 0; i < carried.size(); i++) {
+			Hostages temp = carried.get(i);
+			temp.damage += 2;
+			carried.set(i, temp);
+		}
+		
+
+		return carried;
+	}
+	
+		
+	
+	
+	
+	
+	
+	
 }
