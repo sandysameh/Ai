@@ -3,6 +3,7 @@ package code;
 public class Member {
 	int x;
 	int y;
+	
 	public Member(int m, int n) {
 
 		boolean found;
@@ -27,5 +28,9 @@ public class Member {
 		} while(found);
 		
 	  }
+
+	public Member() {
+		// TODO Auto-generated constructor stub
+	}
 
 }

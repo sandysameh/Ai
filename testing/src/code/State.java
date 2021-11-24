@@ -66,5 +66,13 @@ public class State {
 
 	// or in Class Node to compare "cost" is it possible to have same state and less
 	// cost ?
+	public String toString() {
+		String  result="";
+		result+="x: "+this.xPosition+" y: "+this.yPosition+" c: "+this.carried+" damageNeo: "+damageNeo;
+		for(int i=0;i<remainingHostages.size();i++) {
+			result+="rem"+i+" x,y" +remainingHostages.get(i).x+","+remainingHostages.get(i).y+" damage "+remainingHostages.get(i).damage;
+		}
+		return result;
+	}
 
 }

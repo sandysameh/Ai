@@ -10,6 +10,14 @@ boolean mutated;
 
 		}
 		
+		public Agents(int x, int y,boolean mutated) {
+			super();
+			this.x=x;
+			this.y=y;
+			this.mutated=mutated;
+			
+		  }
+		
 		
 		
 		

@@ -101,7 +101,7 @@ public class TestMatrixPublic {
 	
 	@Test(timeout = 180000)
 	public void testa10() throws Exception {
-		String solution = Matrix.solve(grid10, "BF", true);
+		String solution = Matrix.solve(grid10, "BF", false);
 		solution = solution.replace(" ", "");
 		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid10, solution));
 	}

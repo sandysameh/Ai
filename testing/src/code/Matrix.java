@@ -201,8 +201,16 @@ public class Matrix extends SearchProblem {
 		State currentState = new State(parentState.xPosition, parentState.yPosition, parentState.carried,
 				parentState.damageNeo, parentState.remainingHostages, parentState.carriedHostages, parentState.Agents,
 				parentState.remainingPills, parentState.Pads);
+		
+		
+	//	for (int i = 0; i < currentState.remainingHostages.size(); i++) {
+			//Hostages tempHhh = currentState.remainingHostages.get(0);
+			//System.out.println("hostagee"+tempHhh.x+"  "+tempHhh.y);
+//			break;
+//			}
 
 		if (operator.compareTo(Operator.UP) == 0) {
+			System.out.println("up");
 
 			boolean found = false;
 			boolean found2 = false;
@@ -227,12 +235,14 @@ public class Matrix extends SearchProblem {
 			}
 
 			if (!found && !found2) {
+				
 
 				currentState.xPosition = (currentState.xPosition == 0) ? 0 : currentState.xPosition - 1;
 
 			}
 
 		} else if (operator.compareTo(Operator.DOWN) == 0) {
+			System.out.println("down");
 
 			boolean found = false;
 			boolean found2 = false;
@@ -256,14 +266,19 @@ public class Matrix extends SearchProblem {
 					break;
 				}
 			}
+			
+		
 
 			if (!found && !found2) {
+				
+				
 				currentState.xPosition = (currentState.xPosition == Matrix.m - 1) ? Matrix.m - 1
 						: currentState.xPosition + 1;
 
 			}
 
 		} else if (operator.compareTo(Operator.RIGHT) == 0) {
+			System.out.println("right");
 			boolean found = false;
 			boolean found2=false;
 			int index = 0;
@@ -293,6 +308,7 @@ public class Matrix extends SearchProblem {
 
 		} else if (operator.compareTo(Operator.LEFT) == 0) {
 
+			System.out.println("left");
 			boolean found = false;
 			boolean found2=false;
 			int index = 0;
@@ -324,6 +340,7 @@ public class Matrix extends SearchProblem {
 				int index = 0;
 				for (int i = 0; i < currentState.remainingHostages.size(); i++) {
 					Member temp = currentState.remainingHostages.get(i);
+					//System.out.println("HOATAGE"+i+temp.x +"," +temp.y);
 					if (temp.x == currentState.xPosition && temp.y == currentState.yPosition) {
 						found = true;
 						index = i;
@@ -332,6 +349,8 @@ public class Matrix extends SearchProblem {
 				}
 
 				if (found) {
+					//carry()
+					//System.out.println("i am here"+currentState.xPosition+","+currentState.yPosition+"found "+ currentState.remainingHostages.get(index).x+","+currentState.remainingHostages.get(index).y);
 					currentState.carried--;
 					currentState.carriedHostages.add(currentState.remainingHostages.remove(index));
 
@@ -412,6 +431,7 @@ public class Matrix extends SearchProblem {
 			}
 
 			if (found) {
+				
 				currentState.damageNeo -= 20;
 				if (currentState.damageNeo <= 0) {
 					currentState.damageNeo = 0;
@@ -454,6 +474,10 @@ public class Matrix extends SearchProblem {
 			// How can i increase the health of a hostage on the truck
 			//currentState = increaseDamageRemaining(currentState);
 			HashMap<Integer, ArrayList> retVal = increaseDamageRemaining(currentState.remainingHostages, currentState.Agents);
+//			ArrayList<Hostages> h= retVal.get(0);
+//			for(int kk=0;kk<h.size();kk++) {
+//				System.out.println("newteam output "+h.get(kk).x +"my y "+h.get(kk).y);
+//			}
 			currentState.remainingHostages = retVal.get(0);
 			currentState.Agents = retVal.get(1);
 			
@@ -515,6 +539,9 @@ public class Matrix extends SearchProblem {
 	
 	
 	public HashMap<Integer, ArrayList> increaseDamageRemaining(ArrayList<Hostages> remainingHostages, ArrayList<Agents> Agents) {
+		
+	//	System.out.println("gg "+ remainingHostages.size());
+		//System.exit(0);
 		// SANDY
 		// what if my health reaches 100 do i convert him here
 		// int =0 means it was carried so if it died msh h3mel haga
@@ -529,32 +556,64 @@ public class Matrix extends SearchProblem {
 		// Remaining Hostages
 		for (int i = 0; i < remainingHostages.size(); i++) {
 		
-			Hostages temp =new Hostages(remainingHostages.get(i).x,remainingHostages.get(i).y);
-			temp.damage= remainingHostages.get(i).damage;
+		
+			//System.out.println("gg "+ remainingHostages.size() + " " + i );
+			Hostages temp =new Hostages(remainingHostages.get(i).x,remainingHostages.get(i).y,remainingHostages.get(i).damage);
+			System.out.println("ana hena 2"+temp.x+"    "+temp.y+" "+temp.damage);
+			//temp.damage= remainingHostages.get(i).damage;
 		
 			if (temp.damage < 100) {
 				temp.damage += 2;
-				//remainingHostages.set(i, temp);
+				//newTeam.add(temp);
+
+		
 			}
 			if (temp.damage >= 100) {
+				System.out.println("convertinggg" + numberOfMutatedAgents);
+				
 				deaths += 1;
-				Hostages converted = remainingHostages.get(i);
-				Agents newAgent = new Agents(converted.x, converted.y);
-				newAgent.mutated=true;
+				Hostages converted = temp;
+				Agents newAgent = new Agents(converted.x, converted.y, true);
+				//newAgent.mutated=true;
 				numberOfMutatedAgents++;
 				newAgents.add(newAgent);
-				i--;
+
+
 
 			}
 			else {
+//			
 				newTeam.add(temp);
-			}
+				
+
+				}
+
+				
+	
+//			}		
+			
 			
 
 		}
 		
+//		
+//		System.out.println("suzee" + remainingHostages.size());
+//		System.out.println("new" + newTeam.size());
+//		System.out.println("size agents" + newAgents.size());
+		
+//		for(int t = 0; t<remainingHostages.size();t++) {
+//			System.out.println("teamm" + t + remainingHostages.get(t).x + remainingHostages.get(t).y);
+//	}
+	    //System.exit(0);
 		retVal.put(0, newTeam); 
 		retVal.put(1, newAgents); 
+		
+//		for(int t = 0; t<newAgents.size();t++) {
+//		System.out.println("agent" + t + newAgents.get(t).x + newAgents.get(t).y);
+//	}
+			
+		System.out.println("newwew ret team" + retVal.get(0).size());
+		System.out.println("newwew ret agents" + retVal.get(1).size());
 		
 
 		return retVal;
@@ -604,8 +663,8 @@ public class Matrix extends SearchProblem {
 
 		for (int i = 0; i < carried.size(); i++) {
 			
-			Hostages temp =new Hostages(carried.get(i).x,carried.get(i).y);
-			temp.damage= carried.get(i).damage;
+			Hostages temp =new Hostages(carried.get(i).x,carried.get(i).y,carried.get(i).damage);
+			//temp.damage= carried.get(i).damage;
 
 			if(temp.damage<=100) {
 				temp.damage += 2;
@@ -654,11 +713,15 @@ public class Matrix extends SearchProblem {
 	public ArrayList<Node> Qing_Func(ArrayList<Node> nodes, QingFunction qing_fun) {
 		SearchProblem problem = this;
 		Node parent = nodes.remove(0);
+		System.out.println("martha hi "+parent.currentState);
+//		if(numberOfNodesExpanded==23)
+//			System.exit(0);
 		//System.out.println("hiyomnatt" + parent.currentState.remainingHostages.get(0).damage);
 		numberOfNodesExpanded += 1;
 		int j = 0;
 		for (int i = 0; i < problem.setOperators.length; i++) {
 			State childState = stateSpace(problem.setOperators[i], parent.currentState);
+			//System.out.println(problem.setOperators[i] + "kmfkm");
 			if (!checkRepeatedStates(childState)) {
 				Node childNode = new Node(childState, problem.setOperators[i], parent, parent.depth + 1, parent.cost,
 						-1, -1);
@@ -791,8 +854,8 @@ public class Matrix extends SearchProblem {
 	
 	
 	private static void VisualizeSolution(String [] plan,int nx,int ny,int tbx,int tby,ArrayList<Hostages>remainingHostages,ArrayList<Agents>Agents,ArrayList<Pill>remainingPills,ArrayList<Pad>Pads) {
-		System.out.println("annnaaaa hena");
-		System.out.println("host" + remainingHostages.get(0).damage);
+		//System.out.println("annnaaaa hena");
+		//System.out.println("host" + remainingHostages.get(0).damage);
 		JFrame frame = new JFrame("Visualize Solution");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridLayout(m,n));
@@ -800,8 +863,8 @@ public class Matrix extends SearchProblem {
         frame.pack();
         frame.setVisible(true);
 		JButton[][] ButtonGrid = new JButton[m][n];
-        for (int y = 0; y < n; y++) {
-            for (int x = 0; x < m; x++) {
+        for (int x = 0; x < m; x++) {
+            for (int y = 0; y < n; y++) {
             	ButtonGrid[x][y] = new JButton();
             	ButtonGrid[x][y].setEnabled(false);
                 frame.add(ButtonGrid[x][y]);
@@ -812,10 +875,10 @@ public class Matrix extends SearchProblem {
         //System.out.println(remainingHostages.get(1).x);
 		for(int i =0;i<remainingHostages.size();i++)
 		{
-			System.out.println("hoo"+i);
-		    System.out.println(remainingHostages.get(i).x);
-		    System.out.println(remainingHostages.get(i).y);
-		    System.out.println(remainingHostages.get(i).damage);
+//			System.out.println("hoo"+i);
+//		    System.out.println(remainingHostages.get(i).x);
+//		    System.out.println(remainingHostages.get(i).y);
+//		    System.out.println(remainingHostages.get(i).damage);
 			ButtonGrid[remainingHostages.get(i).x][remainingHostages.get(i).y].setText("Hostage"+remainingHostages.get(i).damage);
 		}
 		for(int i =0;i<Agents.size();i++)
@@ -966,9 +1029,9 @@ public static String solve(String grid, String strategy, boolean visualize) {
 			hostage.x = Integer.parseInt(hostagesList[3*i]);
 			hostage.y = Integer.parseInt(hostagesList[3*i+1]);
 			hostage.damage = Integer.parseInt(hostagesList[3*i+2]);
-			System.out.println("gggg"+hostage.x);
-			System.out.println("gggg"+hostage.y);
-			System.out.println("gggg"+hostage.damage);
+//			System.out.println("gggg"+hostage.x);
+//			System.out.println("gggg"+hostage.y);
+//			System.out.println("gggg"+hostage.damage);
 			remainingHostages.add(hostage);
 			
 		}
@@ -1059,6 +1122,7 @@ public static String solve(String grid, String strategy, boolean visualize) {
 		plan+=""+numberOfNodesExpanded;
 		if(visualize)
 			VisualizeSolution(plan.split(";")[0].split(","),nx,ny,tx,ty,remainingHostages,Agents,remainingPills,Pads);
+		System.out.println(plan);
 		return plan;
 	}
 
@@ -1073,9 +1137,22 @@ public static void main(String[] args) {
 	//time bta3 el tawela bel hash map
 	//deaths w numberofmutants
 	//genGrid problemooo
+	// plan lowercase/uppercase plan 
 	
 	String grid0 = "5,5;2;4,3;2,1;2,0,0,4,0,3,0,1;3,1,3,2;4,4,3,3,3,3,4,4;4,0,17,1,2,54,0,0,46,4,1,22";
-	System.out.println(solve(grid0, "BF", true));
+	String grid1 = "5,5;1;1,4;1,0;0,4;0,0,2,2;3,4,4,2,4,2,3,4;0,2,32,0,1,38";
+	String grid2 = "8,8;1;2,4;5,3;0,4,1,4,3,0,7,7,5,6;0,1,1,3;4,4,3,1,3,1,4,4,0,7,7,0,7,0,0,7;5,5,97";
+	String grid3 = "6,6;2;2,4;2,2;0,4,1,4,3,0,4,2;0,1,1,3;4,4,3,1,3,1,4,4;0,0,94,1,2,38,4,1,76,4,0,80";
+	String grid4 = "7,7;3;0,0;0,6;0,3,0,4,2,3,4,5,6,6,5,4;0,2,4,3;2,0,0,5,0,5,2,0;1,0,83,2,5,38,6,4,66,2,6,20";
+	String grid5 = "5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;0,0,30,3,0,80,4,4,80";
+	String grid6 = "6,6;2;2,2;2,4;0,1,1,0,3,0,4,1,4,3,3,4,1,4,0,3;0,2;1,3,4,2,4,2,1,3;0,0,2,0,4,2,4,0,2,4,4,98,1,1,98";
+	String grid7 = "7,7;4;3,3;0,2;0,1,1,0,1,1,1,2,2,0,2,2,2,4,2,6,1,4;5,5,5,0;5,1,2,5,2,5,5,1;0,0,98,3,2,98,4,4,98,0,3,98,0,4,98,0,5,98,5,4,98";
+	String grid8 = "7,7;4;5,3;2,5;0,0,0,2,0,6,2,3,5,1;1,1,2,6,6,0;4,0,1,6,1,6,4,0;0,4,33,1,4,1,4,3,11,5,4,2,5,5,69,3,1,95";
+	String grid9 = "7,7;3;4,3;3,2;1,0,1,1,1,3,2,5,5,3,5,5;4,2,2,6,6,2,4,4;1,4,6,4,6,4,1,4,4,0,6,6,6,6,4,0,6,0,0,6,0,6,6,0;0,2,98,1,5,26,3,3,70,6,3,90,6,5,32";
+	String grid10 = "6,6;1;2,2;2,4;0,1,1,0,3,0,4,1,4,3,3,4,1,4,0,3,1,5;0,2;1,3,4,2,4,2,1,3;0,5,90,1,2,92,4,4,2,5,5,1,1,1,98";
+	String grid11 = "9,9;2;8,0;3,5;0,1,0,3,1,0,1,1,1,2,0,7,1,8,3,8,6,1,6,5;0,6,2,8;8,1,4,5,4,5,8,1;0,0,95,0,2,98,0,8,94,2,5,13,2,6,39";
+
+	System.out.println(solve(grid2, "BF", true));
 	
 	//double usageCPU = osBean.getProcessCpuLoad();
 	//System.out.println("CPU LOAD: " + usageCPU);
