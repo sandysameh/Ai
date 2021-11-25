@@ -7,6 +7,10 @@ public class State {
 	public int yPosition;
 	public int carried;
 	public int damageNeo;
+	//
+	public int deaths;
+	public int kills;
+	public int numberOfMutatedAgents;
 
 	
 	
@@ -22,12 +26,15 @@ public class State {
 	
 
 	// HOW TO POPULATE THE STATE SPACE
-	public State(int xPosition, int yPosition, int carried, int damageNeo ,ArrayList<Hostages> remainingHostages,ArrayList<Hostages> carriedHostages ,ArrayList<Agents> Agents, ArrayList<Pill> remainingPills,ArrayList<Pad> Pads) {
+	public State(int xPosition, int yPosition, int carried, int damageNeo ,ArrayList<Hostages> remainingHostages,ArrayList<Hostages> carriedHostages ,ArrayList<Agents> Agents, ArrayList<Pill> remainingPills,ArrayList<Pad> Pads,int deaths,int kills, int numberOfMutatedAgents) {
 		super();
 		this.xPosition = xPosition;
 		this.yPosition = yPosition;
 		this.carried = carried;
 		this.damageNeo=damageNeo;
+		this.deaths=deaths;
+		this.kills=kills;
+		this.numberOfMutatedAgents=numberOfMutatedAgents;
 		
 		
 		
