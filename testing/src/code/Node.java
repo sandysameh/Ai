@@ -37,31 +37,26 @@ public class Node implements Comparable<Node> {
 	@Override
 	public int compareTo(Node node2) {
 		// TODO Auto-generated method stub
-		if (this.currentState.rescuedHostages == node2.currentState.rescuedHostages) {
+	
 			if (this.currentState.deaths == node2.currentState.deaths)
 				if (this.currentState.kills == node2.currentState.kills)
 					return 0;
 
-		}
-		if (this.currentState.rescuedHostages == node2.currentState.rescuedHostages) {
-			if (this.currentState.deaths == node2.currentState.deaths)
+		
+		
+			if (this.currentState.deaths == node2.currentState.deaths) {
 				if (this.currentState.kills > node2.currentState.kills) {
 					return 1;
 				} else {
 					return -1;
 				}
-		}
-		if (this.currentState.rescuedHostages == node2.currentState.rescuedHostages) {
+			}
+		
 			if (this.currentState.deaths > node2.currentState.deaths) {
 				return 1;
 			}
-			return -1;
 
-		}
-
-		if (this.currentState.rescuedHostages > node2.currentState.rescuedHostages) {
-			return 1;
-		}
+		
 		return 0;
 
 	}

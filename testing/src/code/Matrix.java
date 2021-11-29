@@ -508,7 +508,7 @@ public class Matrix extends SearchProblem {
 			currentState.carriedHostages = retVal2.get(0);
 
 		}
-		System.out.println(currentState.deaths+"check");
+		//System.out.println(currentState.deaths+"check");
 		return currentState;
 	}
 
@@ -554,7 +554,7 @@ public class Matrix extends SearchProblem {
 			boolean goalReached = problem.goalTest(temp.currentState);
 			
 			if (goalReached) {
-				System.out.println(goalReached);
+				//System.out.println(goalReached);
 				// Node returned instead of "solution"
 				// System.out.println(root.currentState.numberOfMutatedAgents+"ezaykooo");
 
@@ -662,7 +662,7 @@ public class Matrix extends SearchProblem {
 		if (currentState.remainingHostages.size() == 0 && currentState.carried == c
 				&& currentState.carriedHostages.size() == 0 && currentState.numberOfMutatedAgents == 0
 				&& currentState.xPosition == tx && currentState.yPosition == ty) {
-			System.out.println(currentState.deaths+"ehna");
+			//System.out.println(currentState.deaths+"ehna");
 
 			return true;
 		}
@@ -683,7 +683,7 @@ public class Matrix extends SearchProblem {
 //		int actualCost= (operator.compareTo(Operator.TAKEPILL) == 0 ?0: operator.compareTo(Operator.KILL)==0?20:2);
 //		
 //		return 4*rescued+ 3*deathNumber+ 2*killNumber+actualCost+currentNode.cost ;
-		return 20*deathNumber + 20*killNumber + currentNode.depth;
+		return 400000*deathNumber + 20000*killNumber + currentNode.depth;
 //		return 0;
 	}
 
@@ -804,6 +804,10 @@ public class Matrix extends SearchProblem {
 						nodes.add(childNode);
 					} else {
 						int index = getPositionCost(nodes, childNode.cost);
+						System.out.println("New for Loop");
+						for(int kkk=0;kkk<nodes.size();kkk++) {
+							System.out.print(" Node "+kkk+ " My Cost is "+ nodes.get(kkk).cost +" w ana meen "+nodes.get(kkk).depth);
+						}
 						nodes.add(index, childNode);
 					}
 				}
@@ -832,17 +836,18 @@ public class Matrix extends SearchProblem {
 						insertInTraversedStates(childState);
 					}
 				}
-//					else if (qing_fun.compareTo(QingFunction.AS1) == 0) {
-//					insertInTraversedStates(childNode.currentState);
-//					int f = childNode.cost + childNode.h1;
-//					if (nodes.size() == 0) {
-//						nodes.add(childNode);
-//					} else {
-//						int index = getPositionAS1(nodes, childNode.h1 + childNode.cost);
-//						nodes.add(index, childNode);
-//					}
-//
-//				} else if (qing_fun.compareTo(QingFunction.AS2) == 0) {
+					else if (qing_fun.compareTo(QingFunction.AS1) == 0) {
+					insertInTraversedStates(childNode.currentState);
+					int f = childNode.cost + childNode.h1;
+					if (nodes.size() == 0) {
+						nodes.add(childNode);
+					} else {
+						int index = getPositionAS1(nodes, childNode.h1 + childNode.cost);
+						nodes.add(index, childNode);
+					}
+
+				} 
+				//else if (qing_fun.compareTo(QingFunction.AS2) == 0) {
 //					insertInTraversedStates(childNode.currentState);
 //					if (nodes.size() == 0) {
 //						nodes.add(childNode);
@@ -858,7 +863,7 @@ public class Matrix extends SearchProblem {
 
 		if (nodes.size() == 0 && qing_fun.compareTo(QingFunction.ID) == 0) {
 			Node root = new Node(this.initialState, null, null, 0, 0, -1, -1);
-			System.out.println(root.currentState);
+			//System.out.println(root.currentState);
 
 			nodes.add(root);
 			numberOfNodesExpanded = 0;
@@ -919,6 +924,58 @@ public class Matrix extends SearchProblem {
 			return m;
 		}
 	}
+public int getPositionAS1(ArrayList<Node> nodes, int f) {
+		
+		int start = 0;
+		int end = nodes.size() - 1;
+		int m = start + (end - start)/2;
+		
+		if(nodes.size() == 1) {
+			Node node = nodes.get(0);
+			if(node.cost + node.h1 > f) {
+				return 0;
+			} else return 1;
+		}
+		
+		boolean found = false;
+		
+		while(start <= end) {
+			m = start + (end - start)/2;
+			Node node = nodes.get(m);
+			
+			if(node.cost + node.h1 == f) {
+				// get m 
+				found = true;
+				break;
+			}
+			
+			if(node.cost + node.h1 < f) {
+				start = m + 1;
+			}
+			
+			if(node.cost + node.h1 > f) {
+				end = m - 1;
+			}
+			
+		}
+		
+		if (found) {
+			for (int i = m; i < nodes.size(); i++) {
+				if (nodes.get(i).cost + nodes.get(i).h1 > f) {
+					return i;
+				}
+			}
+			return m;
+		} else {
+			for (int i = m; i >= 0; i--) {
+				if (nodes.get(i).cost + nodes.get(i).h1 < f) {
+					return i;
+				}
+			}
+			return m;
+		}
+	}
+
 
 	public boolean checkRepeatedStates(State currentState) {
 		String currentKey = currentState.xPosition + "," + currentState.yPosition + "," + currentState.carried;
@@ -1053,7 +1110,7 @@ public class Matrix extends SearchProblem {
 		}
 
 	}
-
+	
 	public int getHeuristicManhatten(Node node) {
 		State current = node.currentState;
 
@@ -1061,30 +1118,66 @@ public class Matrix extends SearchProblem {
 		if (goal) {
 			return 0;
 		}
+		int killsNum=0;
 
 		int distance = 0;
+		int maxDamage=-11;
+		int tbDistance = 0;
 		int minDistance = 10000;
-		int mutatedHostages = 0;
+		boolean foundHighDamageHost=false;
 		int[] hosatgesCost = new int[current.remainingHostages.size()];
 		int[] mutatedHostagesCost = new int[current.Agents.size()];
+	
 		for (int i = 0; i < current.remainingHostages.size(); i++) {
 			distance = Math.abs((current.xPosition - (current.remainingHostages.get(i).x)))
 					+ Math.abs((current.yPosition - (current.remainingHostages.get(i).y)));
-			hosatgesCost[i] = distance;
-			if (hosatgesCost[i] < minDistance) {
-				minDistance = hosatgesCost[i];
+			tbDistance =  Math.abs((tx - (current.remainingHostages.get(i).x)))
+					+ Math.abs((ty - (current.remainingHostages.get(i).y)));
+			hosatgesCost[i] = distance + tbDistance;
+			Hostages temp=current.remainingHostages.get(i);
+			
+			if(temp.damage>maxDamage && temp.damage+distance<100) {
+				maxDamage=temp.damage;
+				minDistance=hosatgesCost[i];
+				foundHighDamageHost=true;
+				
+			}
+
+		}
+		if(foundHighDamageHost) {
+			return minDistance;
+		}
+		distance=0;
+		if(distance==0) {
+			
+		for (int i = 0; i < current.remainingHostages.size(); i++) {
+			distance = Math.abs((current.xPosition - (current.remainingHostages.get(i).x)))
+					+ Math.abs((current.yPosition - (current.remainingHostages.get(i).y)));
+			hosatgesCost[i] = distance ;
+			Hostages temp=current.remainingHostages.get(i);
+
+			if (current.remainingHostages.get(i).damage+ distance >=100 ) {
+				killsNum+=1;}
+			//mutated
+			if (current.remainingHostages.get(i).damage+ distance >=100 && hosatgesCost[i] < minDistance ) {
+				//killsNum+=1;
+				minDistance = hosatgesCost[i] ;
 			}
 		}
 
-		if (distance == 0) {
+			
 			for (int j = 0; j < current.Agents.size(); j++) {
+				//System.out.println(current.Agents.get(j).x+"helllpppp"+j);
 
 				if (current.Agents.get(j).mutated) {
 
-					mutatedHostages += 1;
+					//System.out.println(current.Agents.get(j).x+"is mutated "+j);
+					killsNum+=1;
 
 					distance = Math.abs((current.xPosition - (current.Agents.get(j).x)))
 							+ Math.abs((current.yPosition - (current.Agents.get(j).y)));
+					
+				
 					mutatedHostagesCost[j] = distance;
 					if (mutatedHostagesCost[j] < minDistance) {
 						minDistance = mutatedHostagesCost[j];
@@ -1093,11 +1186,71 @@ public class Matrix extends SearchProblem {
 
 			}
 
-			return 2 * minDistance * mutatedHostages;
+			return  minDistance +killsNum*20000;
+		}else {
+			return  Math.abs((tx - (current.xPosition)))+ Math.abs((ty - (current.yPosition))) +1;
 		}
 
-		return 2 * minDistance * current.remainingHostages.size();
-	}
+
+		}
+
+//	public int getHeuristicManhatten(Node node) {
+//		State current = node.currentState;
+//
+//		boolean goal = this.goalTest(current);
+//		if (goal) {
+//			return 0;
+//		}
+//
+//		int distance = 0;
+//		int tbDistance = 0;
+//		int minDistance = 10000;
+//		int[] hosatgesCost = new int[current.remainingHostages.size()];
+//		int[] mutatedHostagesCost = new int[current.Agents.size()];
+//		for (int i = 0; i < current.remainingHostages.size(); i++) {
+//			distance = Math.abs((current.xPosition - (current.remainingHostages.get(i).x)))
+//					+ Math.abs((current.yPosition - (current.remainingHostages.get(i).y)));
+//			tbDistance =  Math.abs((tx - (current.remainingHostages.get(i).x)))
+//					+ Math.abs((ty - (current.remainingHostages.get(i).y)));
+//			hosatgesCost[i] = distance + tbDistance;
+//			
+//			if (current.remainingHostages.get(i).damage+ hosatgesCost[i]<100) {
+//				minDistance = hosatgesCost[i];
+//			}
+////		
+////			if (hosatgesCost[i] < minDistance) {
+////				minDistance = hosatgesCost[i];
+////			}
+//		}
+//
+//		if (distance == 0) {
+//			
+//			for (int j = 0; j < current.Agents.size(); j++) {
+//				//System.out.println(current.Agents.get(j).x+"helllpppp"+j);
+//
+//				if (current.Agents.get(j).mutated) {
+//
+//					System.out.println(current.Agents.get(j).x+"is mutated "+j);
+//
+//					distance = Math.abs((current.xPosition - (current.Agents.get(j).x)))
+//							+ Math.abs((current.yPosition - (current.Agents.get(j).y)));
+//					tbDistance =  Math.abs((tx - (current.Agents.get(j).x)))
+//							+ Math.abs((ty - (current.Agents.get(j).y)));
+//					
+//					mutatedHostagesCost[j] = distance + tbDistance;
+//					if (mutatedHostagesCost[j] < minDistance) {
+//						minDistance = mutatedHostagesCost[j];
+//					}
+//				}
+//
+//			}
+//
+//			return  minDistance * current.numberOfMutatedAgents ;
+//		}
+//
+//		return minDistance * current.remainingHostages.size() ;
+//		//return 400000*current.deaths+20000*current.kills;
+//		}
 
 	public static String solve(String grid, String strategy, boolean visualize) {
 
@@ -1220,9 +1373,9 @@ public class Matrix extends SearchProblem {
 //		case "GR2":
 //			qing_func = QingFunction.GR2;
 //			break;
-//		case "AS1":
-//			qing_func = QingFunction.AS1;
-//			break;
+		case "AS1":
+			qing_func = QingFunction.AS1;
+			break;
 //		case "AS2":
 //			qing_func = QingFunction.AS2;
 //			break;
@@ -1247,12 +1400,13 @@ public class Matrix extends SearchProblem {
 		String plan = "";
 
 		// delete me///////////////////////////////////////////
-//		Node n = new Node(initialState, null, null, 0, 0, -1, -1);
-//		n.h1 = m1.getHeuristicManhatten(n);
-//	//	n.h2 = m1.getHeuristicEuclidean(n);
-//
-//		System.out.println("result cost ===> " +  result.cost);
-//		System.out.println("heurist from node 1 ====> " + n.h1);
+		Node n = new Node(initialState, null, null, 0, 0, -1, -1);
+		n.h1 = m1.getHeuristicManhatten(n);
+	//	n.h2 = m1.getHeuristicEuclidean(n);
+
+		System.out.println("result cost ===> " +  result.cost);
+		System.out.println("Heuristic of result===>" + result.h1 );
+		System.out.println("heurist from node 1 ====> " + n.h1);
 	//	System.out.println("heurist from node 2 ====> " + n.h2);
 		///////////////////////////////////////////////////////
 
@@ -1318,7 +1472,8 @@ public class Matrix extends SearchProblem {
 
 //	//String grid12= "5,5;2;0,4;1,4;0,1,1,1,2,1,3,1,3,3,3,4;1,0,2,4;0,3,4,3,4,3,0,3;0,0,30,3,0,80,4,4,80";
 //
-		System.out.println(solve(grid7, "UC", false));
+		solve(grid1, "AS1", false);
+		solve(grid1, "UC", false);
 		// updateddd
 
 		// double usageCPU = osBean.getProcessCpuLoad();
